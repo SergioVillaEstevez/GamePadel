@@ -46,9 +46,7 @@ const movePelota=()=>{
         dy= -dy
     }
 
-    if(pelotaX+10>canvas.width || pelotaX - 10 < 0 ){
-        dx= -dx
-    }
+
 
 
 }
@@ -111,34 +109,36 @@ const drawPala2=()=>{
 //colision con palas
 
 const collisionPala1 = () => {
-    if (
-        pelotaX - 10 < palaUnoX + palaAncho &&   // el borde izq. de la pelota toca la pala
-        pelotaX + 10 > palaUnoX &&               // el borde der. de la pelota está más allá de la pala
-        pelotaY > palaUnoY &&                    // la pelota está por debajo del borde superior
-        pelotaY < palaUnoY + palaLargo           // la pelota está por encima del borde inferior
-    ) {
-        dx = -dx; // rebota en X
-    }
-};
 
-const collisionPalaDos =()=>{
-
-      if (
-        pelotaX + 10 < palaDosX+ palaAncho &&   // el borde izq. de la pelota toca la pala
-        pelotaX - 10 > palaDosX &&               // el borde der. de la pelota está más allá de la pala
-        pelotaY > palaDosY &&                    // la pelota está por debajo del borde superior
-        pelotaY < palaDosY + palaLargo           // la pelota está por encima del borde inferior
-    ) {
-        dx = -dx; // rebota en X
-    }
+if(
+    pelotaX - 10 < palaUnoX + palaAncho &&
+    pelotaX + 10 > palaUnoX &&
+    pelotaY < palaUnoY + palaLargo &&
+    pelotaY > palaUnoY
+){
+    dx=-dx
 
 }
+
+
+
+}
+
+const collisionPalaDos = () => {
+  if (
+    pelotaX + 10 >= palaDosX &&                     // borde derecho de la pelota toca el borde izq. de la pala
+    pelotaX - 10 <= palaDosX + palaAncho &&         // borde izq. de la pelota toca el borde der. de la pala
+    pelotaY + 10 >= palaDosY &&                     // borde inferior de la pelota toca el borde sup. de la pala
+    pelotaY - 10 <= palaDosY + palaLargo            // borde sup. de la pelota toca el borde inf. de la pala
+  ) {
+    dx = -dx; // rebota en X
+  }
+};
 
 
 // funcion para manejar la pala 1
 
 document.addEventListener("keydown", (e)=>{
-
     if(e.key==="ArrowUp"){
 
         palaUnoY-=palaMas
@@ -156,6 +156,23 @@ document.addEventListener("keydown", (e)=>{
 //funcion para manejar la pala 2
 
 
+const movimientoPalaDosIa= ()=>{
+    if(
+        pelotaY > palaDosY
+    ){
+        palaDosY+= 10
+    }
+     if(
+        pelotaY < palaDosY
+    ){
+        palaDosY-= 10
+    }
+
+
+
+}
+
+
 
 
 // Juego por frame
@@ -168,12 +185,22 @@ const gameLoop=()=> {
     drawPelota()
     drawPala1()
     drawPala2()
-    SubeMarcador()
+    
     drawScore()
     collisionPala1();
     collisionPalaDos();
 
 
+    if(pelotaX < 0){
+        equipoBGol+=1;
+        resetPelota();
+    }
+
+      if(pelotaX > canvas.width){
+        equipoAGol+=1;
+        resetPelota();
+    }
+    movimientoPalaDosIa()
 
 
 requestAnimationFrame(gameLoop)
